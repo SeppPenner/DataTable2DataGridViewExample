@@ -2,7 +2,6 @@ DataTable2DataGridViewExample
 ====================================
 
 DataTable2DataGridViewExample is an executable to check how data from a DataTable can be transfered to a DataGridView.
-The executable was written and tested in .Net 5.0.
 
 [![Build status](https://ci.appveyor.com/api/projects/status/ofu1tw09dl8j7j4g?svg=true)](https://ci.appveyor.com/project/SeppPenner/datatable2datagridviewexample)
 [![GitHub issues](https://img.shields.io/github/issues/SeppPenner/DataTable2DataGridViewExample.svg)](https://github.com/SeppPenner/DataTable2DataGridViewExample/issues)
