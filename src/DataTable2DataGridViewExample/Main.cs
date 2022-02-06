@@ -10,6 +10,7 @@
 namespace DataTable2DataGridViewExample
 {
     using System;
+    using System.Collections.Generic;
     using System.Data;
     using System.Windows.Forms;
 
@@ -49,13 +50,21 @@ namespace DataTable2DataGridViewExample
             }
 
             // Make First Name + Last Name require uniqueness.
-            DataColumn[] uniqueCols =
-            {
-                dt.Columns["First Name"],
-                dt.Columns["Last Name"]
-            };
+            var uniqueCols = new List<DataColumn>();
+            var firstNameColumn = dt.Columns["First Name"];
+            var lastNameColumn = dt.Columns["Last Name"];
 
-            dt.Constraints.Add(new UniqueConstraint(uniqueCols));
+            if (firstNameColumn is not null)
+            {
+                uniqueCols.Add(firstNameColumn);
+            }
+
+            if (lastNameColumn is not null)
+            {
+                uniqueCols.Add(lastNameColumn);
+            }
+
+            dt.Constraints.Add(new UniqueConstraint(uniqueCols.ToArray()));
 
             // Add items to the table.
             dt.Rows.Add("Rod", "Stephens", "Nerd", 10000);
