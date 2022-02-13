@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32126.317
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTable2DataGridViewExample", "DataTable2DataGridViewExample\DataTable2DataGridViewExample.csproj", "{FCA9F17E-C34F-4D21-80EA-1C3AF24A61FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataTable2DataGridViewExample", "DataTable2DataGridViewExample\DataTable2DataGridViewExample.csproj", "{FCA9F17E-C34F-4D21-80EA-1C3AF24A61FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +18,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7EC81DC9-6D9D-45DE-899C-5A5B428DF9A0}
 	EndGlobalSection
 EndGlobal
