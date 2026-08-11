@@ -11,7 +11,7 @@ folder and no CI file in the repository.
 One solution `src/DataTable2DataGridViewExample.sln` with exactly one project:
 
 - `src/DataTable2DataGridViewExample/DataTable2DataGridViewExample.csproj`, `OutputType` `WinExe`,
-  `UseWindowsForms`, `TargetFramework` `net9.0-windows`, `RuntimeIdentifiers` `win-x64`,
+  `UseWindowsForms`, `TargetFramework` `net10.0-windows`, `RuntimeIdentifiers` `win-x64`,
   `ApplicationIcon` `Grid.ico`.
 
 Layout inside `src/DataTable2DataGridViewExample`:
@@ -40,7 +40,7 @@ Repository root: `README.md` (the only user documentation, spelled in capitals u
 dotnet build src/DataTable2DataGridViewExample.sln
 ```
 
-- Single target framework `net9.0-windows`, no multi-targeting. Windows only, the project is a
+- Single target framework `net10.0-windows`, no multi-targeting. Windows only, the project is a
   Windows Forms application.
 - All build properties live directly in the single `.csproj`. There is **no**
   `Directory.Build.props` in this repository.
