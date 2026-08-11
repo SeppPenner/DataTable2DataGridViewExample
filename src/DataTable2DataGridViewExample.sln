@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.32126.317
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataTable2DataGridViewExample", "DataTable2DataGridViewExample\DataTable2DataGridViewExample.csproj", "{FCA9F17E-C34F-4D21-80EA-1C3AF24A61FD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTable2DataGridViewExample.Tests", "DataTable2DataGridViewExample.Tests\DataTable2DataGridViewExample.Tests.csproj", "{D30107F2-FFFE-491D-AB95-0FED755339A4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{FCA9F17E-C34F-4D21-80EA-1C3AF24A61FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCA9F17E-C34F-4D21-80EA-1C3AF24A61FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FCA9F17E-C34F-4D21-80EA-1C3AF24A61FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D30107F2-FFFE-491D-AB95-0FED755339A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D30107F2-FFFE-491D-AB95-0FED755339A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D30107F2-FFFE-491D-AB95-0FED755339A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D30107F2-FFFE-491D-AB95-0FED755339A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

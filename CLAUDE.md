@@ -8,26 +8,42 @@ done. It is a code example, **not** a library and **not** a NuGet package: no `O
 `Library`, no `GeneratePackageOnBuild`, no push script. There is also no installer, no `Setup`
 folder and no CI file in the repository.
 
-One solution `src/DataTable2DataGridViewExample.sln` with exactly one project:
+One solution `src/DataTable2DataGridViewExample.sln` with exactly two projects:
 
 - `src/DataTable2DataGridViewExample/DataTable2DataGridViewExample.csproj`, `OutputType` `WinExe`,
   `UseWindowsForms`, `TargetFramework` `net10.0-windows`, `RuntimeIdentifiers` `win-x64`,
-  `ApplicationIcon` `Grid.ico`.
+  `ApplicationIcon` `Grid.ico`, the actual example.
+- `src/DataTable2DataGridViewExample.Tests/DataTable2DataGridViewExample.Tests.csproj`, MSTest,
+  added in version 1.0.8.0.
 
 Layout inside `src/DataTable2DataGridViewExample`:
 
 - `Program.cs`: the entry point. `[STAThread] public static void Main()` with
   `ApplicationConfiguration.Initialize()` and `Application.Run(new Main())`. There is no
   `StartupObject` property, the SDK finds this `Main` because it is the only one.
-- `Main.cs`: the form. The constructor only calls `InitializeComponent`, all example code sits in
-  the `FormLoad` handler: set the window title, create the `DataTable`, add four columns, make every
-  column required, add a `UniqueConstraint` over first and last name, add four rows, assign the
-  table as `DataSource`.
+- `PeopleTableFactory.cs`: `CreatePeopleTable` builds the example `DataTable`: four columns, every
+  column required, a `UniqueConstraint` over first and last name, four sample rows. This is the part
+  worth showing and the only part the tests can reach, which is why it does not live in the form.
+- `Main.cs`: the form. The constructor only calls `InitializeComponent`, the `FormLoad` handler sets
+  the window title and assigns `PeopleTableFactory.CreatePeopleTable()` to
+  `DataGridView.DataSource`, which is the whole point of the example.
 - `Main.Designer.cs` and `Main.resx`: designer output. The `.resx` holds no resources, only the
   default headers.
 - `GlobalUsings.cs`: the single using of the project, `global using System.Data;`.
 - `Grid.ico`: the application icon. `License.txt`: a copy of the root license, copied to the output
   directory with `CopyToOutputDirectory=Always`.
+
+Layout inside `src/DataTable2DataGridViewExample.Tests`:
+
+- `PeopleTableFactoryTests.cs`: the columns and their types, the required columns, the constraint
+  over both name columns, the sample rows, a fresh table per call, the rejected row without a value,
+  the rejected duplicate name, the accepted shared last name, and the grid that fills itself from
+  the table.
+- `GlobalUsings.cs`: all usings of the test project.
+
+The test project targets `net10.0-windows` with `UseWindowsForms`, not plain `net10.0`, because it
+references the Windows Forms executable. Everything under test is Windows Forms independent except
+the one test that binds a `DataGridView`.
 
 Repository root: `README.md` (the only user documentation, spelled in capitals unlike the
 `Readme.md` of the sibling repositories), `Changelog.md`, `License.txt` (MIT), `.gitattributes` and
@@ -40,10 +56,14 @@ Repository root: `README.md` (the only user documentation, spelled in capitals u
 dotnet build src/DataTable2DataGridViewExample.sln
 ```
 
-- Single target framework `net10.0-windows`, no multi-targeting. Windows only, the project is a
-  Windows Forms application.
-- All build properties live directly in the single `.csproj`. There is **no**
-  `Directory.Build.props` in this repository.
+```powershell
+dotnet test src/DataTable2DataGridViewExample.sln
+```
+
+- Single target framework `net10.0-windows` in both projects, no multi-targeting. Windows only, the
+  projects are Windows Forms projects.
+- All build properties live directly in the two `.csproj` files and are duplicated there. There is
+  **no** `Directory.Build.props` in this repository.
 - `TreatWarningsAsErrors` is enabled, so every warning breaks the build, NuGet warnings (`NU****`)
   from restore included. A clean build reports zero warnings, keep it that way.
 - `NU1803` (HTTP source usage during restore) is the one warning suppressed via `NoWarn`. Fix
@@ -54,9 +74,14 @@ dotnet build src/DataTable2DataGridViewExample.sln
 - Restore needs nuget.org. If a private feed is configured globally on the machine and answers 404
   for public packages, restore fails with `NU1301`. Then build with an explicit source:
   `dotnet build src/DataTable2DataGridViewExample.sln --source https://api.nuget.org/v3/index.json`.
-- There are no tests. A behaviour change is verified by starting the application and looking at the
-  grid: four columns, four rows, `Salary` right aligned as a number, and the window title showing
-  the version.
+- Tests are MSTest, in the single test project `src/DataTable2DataGridViewExample.Tests`, which
+  follows the same package set as the sibling repositories: `Microsoft.NET.Test.Sdk`,
+  `MSTest.TestAdapter`, `MSTest.TestFramework`, `coverlet.collector` and `GitVersion.MsBuild`.
+  `dotnet test` runs 9 tests, they need no network, no fixture and no window on screen, and they
+  leave nothing behind. Never claim a test run happened without running it.
+- Beyond the tests, a behaviour change is verified by starting the application and looking at the
+  grid: four columns, four rows, `Salary` right aligned as a number, the grid growing with the
+  window, and the window title showing the version.
 
 ## Code conventions
 
@@ -66,7 +91,7 @@ Follow the surrounding code, it is consistent in the hand written files:
   `<summary>`, then the file-scoped namespace.
 - XML doc comments on every type and every member, private members included, no exceptions.
 - `Nullable`, `ImplicitUsings` and `LangVersion latest` are enabled.
-- New `using` directives go into `src/DataTable2DataGridViewExample/GlobalUsings.cs`, inside the
+- New `using` directives go into the `GlobalUsings.cs` of the respective project, inside the
   existing `#pragma warning disable IDE0065` block, never at the top of a file. The editorconfig
   requires usings inside the namespace (`csharp_using_directive_placement=inside_namespace:warning`),
   which global usings cannot satisfy, that is what the pragma is for. Do not add other pragmas. The
@@ -91,7 +116,7 @@ Do not silently "clean up" these, they are existing behaviour:
   `1.0.8-1+Branch.master.Sha...` in the title bar. Same behaviour as the sibling repository
   `512kbChecker`.
 - **The null checks on the columns are not paranoia.** `DataTable.Columns["First Name"]` returns
-  `DataColumn?`, and warnings are errors here, so `Main.FormLoad` collects the two columns in a
+  `DataColumn?`, and warnings are errors here, so `PeopleTableFactory` collects the two columns in a
   `List<DataColumn>` behind `is not null` checks before it builds the `UniqueConstraint`. The
   columns are added three lines above and can never be null, the checks only satisfy the nullable
   analysis. Replacing them with `!` would work but nothing else in these repositories uses `!`.
@@ -99,7 +124,12 @@ Do not silently "clean up" these, they are existing behaviour:
   plus last name get a `UniqueConstraint`. The `DataGridView` inherits both, so editing a cell or
   adding a row in the running application can raise `NoNullAllowedException` or
   `ConstraintException`. There is no `DataError` handler, the grid shows its own default error
-  dialog. That is what the example demonstrates, it is not a bug to hide.
+  dialog. That is what the example demonstrates, it is not a bug to hide, and two tests pin both
+  exceptions down.
+- **A bound `DataGridView` needs a `BindingContext` outside a form.** The grid test sets
+  `BindingContext = new BindingContext()` before it assigns the `DataSource`. Without a parent form
+  the grid has no binding context, the binding would be deferred and the test would see zero rows.
+  The grid also reports one row more than the table has, the empty row it offers for new entries.
 - **The sample data is quoted from the original example.** Rod Stephens, Sergio Aragones, Eoin
   Colfer and Terry Pratchett with salaries 10000 to 40000. The names are also the reason why the
   ReSharper user dictionary knows `Aragones`, `Colfer` and `Eoin`.
