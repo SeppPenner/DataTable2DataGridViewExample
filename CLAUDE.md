@@ -17,21 +17,17 @@ One solution `src/DataTable2DataGridViewExample.sln` with exactly one project:
 Layout inside `src/DataTable2DataGridViewExample`:
 
 - `Program.cs`: the entry point. `[STAThread] public static void Main()` with
-  `Application.EnableVisualStyles`, `Application.SetCompatibleTextRenderingDefault(false)` and
-  `Application.Run(new Main())`. There is no `StartupObject` property, the SDK finds this `Main`
-  because it is the only one.
+  `ApplicationConfiguration.Initialize()` and `Application.Run(new Main())`. There is no
+  `StartupObject` property, the SDK finds this `Main` because it is the only one.
 - `Main.cs`: the form. The constructor only calls `InitializeComponent`, all example code sits in
-  the `FormLoad` handler: create the `DataTable`, add four columns, make every column required, add
-  a `UniqueConstraint` over first and last name, add four rows, assign the table as `DataSource`.
+  the `FormLoad` handler: set the window title, create the `DataTable`, add four columns, make every
+  column required, add a `UniqueConstraint` over first and last name, add four rows, assign the
+  table as `DataSource`.
 - `Main.Designer.cs` and `Main.resx`: designer output. The `.resx` holds no resources, only the
   default headers.
 - `GlobalUsings.cs`: the single using of the project, `global using System.Data;`.
 - `Grid.ico`: the application icon. `License.txt`: a copy of the root license, copied to the output
   directory with `CopyToOutputDirectory=Always`.
-
-`src/GlobalUsings.cs` exists one level above the project. It is a leftover from a copy of a
-sibling repository, it declares `System.Security.Cryptography` and `System.Text`, and it belongs to
-no project, so nothing compiles it.
 
 Repository root: `README.md` (the only user documentation, spelled in capitals unlike the
 `Readme.md` of the sibling repositories), `Changelog.md`, `License.txt` (MIT), `.gitattributes` and
@@ -59,7 +55,8 @@ dotnet build src/DataTable2DataGridViewExample.sln
   for public packages, restore fails with `NU1301`. Then build with an explicit source:
   `dotnet build src/DataTable2DataGridViewExample.sln --source https://api.nuget.org/v3/index.json`.
 - There are no tests. A behaviour change is verified by starting the application and looking at the
-  grid: four columns, four rows, `Salary` right aligned as a number.
+  grid: four columns, four rows, `Salary` right aligned as a number, and the window title showing
+  the version.
 
 ## Code conventions
 
@@ -87,6 +84,12 @@ Follow the surrounding code, it is consistent in the hand written files:
 
 Do not silently "clean up" these, they are existing behaviour:
 
+- **The window title carries the version.** The designer sets `Text` to
+  `DataTable2DataGridViewExample`, `FormLoad` overwrites it with
+  `$@"{Application.ProductName} {Application.ProductVersion}"`. `ProductVersion` is the
+  informational version from GitVersion, so an untagged build shows something like
+  `1.0.8-1+Branch.master.Sha...` in the title bar. Same behaviour as the sibling repository
+  `512kbChecker`.
 - **The null checks on the columns are not paranoia.** `DataTable.Columns["First Name"]` returns
   `DataColumn?`, and warnings are errors here, so `Main.FormLoad` collects the two columns in a
   `List<DataColumn>` behind `is not null` checks before it builds the `UniqueConstraint`. The

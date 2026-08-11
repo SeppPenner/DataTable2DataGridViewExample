@@ -29,6 +29,8 @@ public partial class Main : Form
     /// <param name="e">The event args.</param>
     private void FormLoad(object sender, EventArgs e)
     {
+        this.Text = $@"{Application.ProductName} {Application.ProductVersion}";
+
         // Make the DataTable object.
         var dt = new DataTable("People");
 
